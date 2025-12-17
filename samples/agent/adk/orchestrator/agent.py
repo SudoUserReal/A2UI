@@ -172,8 +172,24 @@ class OrchestratorAgent:
                 logger.info(f'Created remote agent with description: {description}')
 
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+        
+        # 支持自定义 API key header（用于 api-key header 而不是 Authorization）
+        model_kwargs = {"model": LITELLM_MODEL}
+        
+        # 如果设置了自定义 API base，使用它
+        if api_base := os.getenv("LITELLM_API_BASE") or os.getenv("AZURE_API_BASE"):
+            model_kwargs["api_base"] = api_base
+        
+        # 如果使用 Azure 格式（支持 api-key header），设置相关参数
+        if LITELLM_MODEL.startswith("azure/"):
+            if azure_api_key := os.getenv("AZURE_API_KEY"):
+                # Azure OpenAI 使用 api-key header，LiteLlm 会自动处理
+                pass
+            if azure_api_version := os.getenv("AZURE_API_VERSION"):
+                model_kwargs["api_version"] = azure_api_version
+        
         return LlmAgent(
-            model=LiteLlm(model=LITELLM_MODEL),
+            model=LiteLlm(**model_kwargs),
             name="orchestrator_agent",
             description="An agent that orchestrates requests to multiple other agents",
             instruction="You are an orchestrator agent. Your sole responsibility is to analyze the incoming user request, determine the user's intent, and route the task to exactly one of your expert subagents",
