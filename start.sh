@@ -5,8 +5,8 @@
 
 # 从 curl 命令中提取的配置
 # API Base URL: 去掉 /chat/completions 部分，保留到 deployments/gemini-2.5-pro
-export CUSTOM_API_BASE="https://genai-sg-og.tiktok-row.org/gpt/openapi/online/v2/crawl/openai/deployments/gemini-2.5-pro"
-export CUSTOM_API_KEY="mk0ZPuWkUXw7cvBxdQuFSxg03Tv9r3Uw_GPT_AK"
+export CUSTOM_API_BASE=""
+export CUSTOM_API_KEY=""
 export CUSTOM_MODEL="gemini-2.5-pro"
 
 # 使用 Azure OpenAI 格式（因为它也使用 api-key header）
