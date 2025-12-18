@@ -17,7 +17,14 @@ function App() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [hasData, setHasData] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    // Check if theme-mode is already set
+    const themeMode = document.body.getAttribute('theme-mode');
+    if (themeMode === 'dark') return true;
+    if (themeMode === 'light') return false;
+    // Otherwise check system preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const loadingIntervalRef = useRef<number | null>(null);
 
@@ -38,7 +45,11 @@ function App() {
     if (config.background) {
       document.documentElement.style.setProperty('--background', config.background);
     }
-  }, [config]);
+    // Initialize theme mode based on current state
+    if (!document.body.hasAttribute('theme-mode')) {
+      document.body.setAttribute('theme-mode', isDark ? 'dark' : 'light');
+    }
+  }, [config, isDark]);
 
   // Handle loading text rotation
   const startLoadingAnimation = useCallback(() => {
@@ -116,11 +127,9 @@ function App() {
     setIsDark((prev) => {
       const next = !prev;
       if (next) {
-        document.body.classList.add('dark');
-        document.body.classList.remove('light');
+        document.body.setAttribute('theme-mode', 'dark');
       } else {
-        document.body.classList.add('light');
-        document.body.classList.remove('dark');
+        document.body.setAttribute('theme-mode', 'light');
       }
       return next;
     });

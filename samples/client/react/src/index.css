@@ -89,11 +89,11 @@ body {
   color-scheme: var(--color-scheme);
 }
 
-body.light {
+body[theme-mode="light"] {
   --color-scheme: light;
 }
 
-body.dark {
+body[theme-mode="dark"] {
   --color-scheme: dark;
 }
 

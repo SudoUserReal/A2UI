@@ -1,4 +1,5 @@
 import React from 'react';
+import { VideoPlayer } from '@douyinfe/semi-ui';
 import { Types } from '@a2ui/lit/0.8';
 import { CatalogComponentProps } from './index';
 import { useStringBinding } from '../../core/hooks';
@@ -20,12 +21,13 @@ export function Video({ surfaceId, component }: CatalogComponentProps) {
   };
 
   return (
-    <video
-      id={component.id}
-      src={videoUrl}
-      controls
-      style={style}
-    />
+    <div data-id={component.id} style={style}>
+      <VideoPlayer
+        src={videoUrl}
+        theme="light"
+        controlsList={['play', 'time', 'volume', 'playbackRate', 'fullscreen', 'pictureInPicture']}
+      />
+    </div>
   );
 }
 

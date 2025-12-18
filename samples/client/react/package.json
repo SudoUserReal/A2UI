@@ -15,7 +15,8 @@
     "serve:agent:contact_lookup": "cd ../../agent/adk/contact_lookup && uv run .",
     "serve:agent:contact_multi_surface": "cd ../../agent/adk/contact_multiple_surfaces && uv run .",
     "build:renderer": "cd ../../../renderers/react && npm install && npm run build",
-    "demo:all": "npm install && npm run build:renderer && concurrently -k -n \"REACT,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\"",
+    "build:lit": "cd ../../../renderers/lit && npm i && npm run build",
+    "demo:all": "npm install && npm run build:lit && npm run build:renderer && concurrently -k -n \"REACT,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\"",
     "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"REACT,REST\" -c \"magenta,blue\" \"npm run serve\" \"npm run serve:agent:restaurant\""
   },
   "wireit": {

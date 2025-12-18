@@ -37,11 +37,11 @@
   }
 }
 
-body.dark .hero-img {
+body[theme-mode="dark"] .hero-img {
   background-image: var(--background-image-dark);
 }
 
-body.light .hero-img {
+body[theme-mode="light"] .hero-img {
   background-image: var(--background-image-light);
 }
 

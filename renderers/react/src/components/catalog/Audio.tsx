@@ -1,4 +1,5 @@
 import React from 'react';
+import { AudioPlayer } from '@douyinfe/semi-ui';
 import { Types } from '@a2ui/lit/0.8';
 import { CatalogComponentProps } from './index';
 import { useStringBinding } from '../../core/hooks';
@@ -20,11 +21,14 @@ export function Audio({ surfaceId, component }: CatalogComponentProps) {
   };
 
   return (
-    <div id={component.id} style={style}>
+    <div data-id={component.id} style={style}>
       {audioDescription && (
-        <div style={{ marginBottom: 8 }}>{audioDescription}</div>
+        <div style={{ marginBottom: 8, color: 'var(--semi-color-text-0)' }}>{audioDescription}</div>
       )}
-      <audio src={audioUrl} controls style={{ width: '100%' }} />
+      <AudioPlayer
+        audioUrl={audioUrl}
+        theme="light"
+      />
     </div>
   );
 }
