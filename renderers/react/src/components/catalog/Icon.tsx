@@ -5,24 +5,75 @@ import { useStringBinding } from '../../core/hooks';
 
 type IconComponentType = typeof Icons.IconPlus;
 
-// Map common icon names to Semi UI icons
+// Map A2UI standard icon names to Semi UI icons
+// Reference: A2UI specification/0.9/json/standard_catalog_definition.json
 const iconMap: Record<string, IconComponentType> = {
+  // === A2UI Standard Icons (camelCase) ===
+  'accountcircle': Icons.IconUser,
   'add': Icons.IconPlus,
-  'plus': Icons.IconPlus,
-  'close': Icons.IconClose,
+  'arrowback': Icons.IconArrowLeft,
+  'arrowforward': Icons.IconArrowRight,
+  'attachfile': Icons.IconPaperclip,
+  'calendartoday': Icons.IconCalendar,
+  'call': Icons.IconPhone,
+  'camera': Icons.IconCamera,
   'check': Icons.IconTick,
-  'search': Icons.IconSearch,
-  'edit': Icons.IconEdit,
+  'close': Icons.IconClose,
   'delete': Icons.IconDelete,
-  'settings': Icons.IconSetting,
+  'download': Icons.IconDownload,
+  'edit': Icons.IconEdit,
+  'event': Icons.IconCalendar,
+  'error': Icons.IconAlertTriangle,
+  'fastforward': Icons.IconFastForward,
+  'favorite': Icons.IconLikeHeart,
+  'favoriteoff': Icons.IconLikeHeart,
+  'folder': Icons.IconFolder,
+  'help': Icons.IconHelpCircle,
   'home': Icons.IconHome,
-  'user': Icons.IconUser,
+  'info': Icons.IconInfoCircle,
+  'locationon': Icons.IconMapPin,
+  'lock': Icons.IconLock,
+  'lockopen': Icons.IconUnlock,
+  'mail': Icons.IconMail,
+  'menu': Icons.IconMenu,
+  'morevert': Icons.IconMoreStroked,
+  'morehoriz': Icons.IconMore,
+  'notificationsoff': Icons.IconBellStroked,
+  'notifications': Icons.IconBell,
+  'pause': Icons.IconPause,
+  'payment': Icons.IconCreditCard,
+  'person': Icons.IconUser,
+  'phone': Icons.IconPhone,
+  'photo': Icons.IconImage,
+  'play': Icons.IconPlay,
+  'print': Icons.IconPrint,
+  'refresh': Icons.IconRefresh,
+  'rewind': Icons.IconBackward,
+  'search': Icons.IconSearch,
+  'send': Icons.IconSend,
+  'settings': Icons.IconSetting,
+  'share': Icons.IconShareStroked,
+  'shoppingcart': Icons.IconShoppingBag,
+  'skipnext': Icons.IconForward,
+  'skipprevious': Icons.IconBackward,
   'star': Icons.IconStar,
+  'starhalf': Icons.IconStar,
+  'staroff': Icons.IconStarStroked,
+  'stop': Icons.IconStop,
+  'upload': Icons.IconUpload,
+  'visibility': Icons.IconEyeOpened,
+  'visibilityoff': Icons.IconEyeClosedSolid,
+  'volumedown': Icons.IconVolume1,
+  'volumemute': Icons.IconVolumnSilent,
+  'volumeoff': Icons.IconVolumnSilent,
+  'volumeup': Icons.IconVolume2,
+  'warning': Icons.IconAlertCircle,
+
+  // === Additional common aliases ===
+  'plus': Icons.IconPlus,
+  'user': Icons.IconUser,
   'like': Icons.IconLikeHeart,
   'heart': Icons.IconLikeHeart,
-  'info': Icons.IconInfoCircle,
-  'warning': Icons.IconAlertCircle,
-  'error': Icons.IconClose,
   'success': Icons.IconTickCircle,
   'arrow-left': Icons.IconArrowLeft,
   'arrow-right': Icons.IconArrowRight,
@@ -32,14 +83,8 @@ const iconMap: Record<string, IconComponentType> = {
   'chevron-right': Icons.IconChevronRight,
   'chevron-up': Icons.IconChevronUp,
   'chevron-down': Icons.IconChevronDown,
-  'menu': Icons.IconMenu,
   'more': Icons.IconMore,
-  'refresh': Icons.IconRefresh,
-  'download': Icons.IconDownload,
-  'upload': Icons.IconUpload,
   'copy': Icons.IconCopy,
-  'mail': Icons.IconMail,
-  'phone': Icons.IconPhone,
   'calendar': Icons.IconCalendar,
   'clock': Icons.IconClock,
   'location': Icons.IconMapPin,
@@ -47,8 +92,20 @@ const iconMap: Record<string, IconComponentType> = {
   'image': Icons.IconImage,
   'video': Icons.IconVideo,
   'file': Icons.IconFile,
-  'folder': Icons.IconFolder,
 };
+
+/**
+ * Normalize icon name to match iconMap keys.
+ * Handles both camelCase (A2UI spec) and snake_case (Material Icons style).
+ * Examples:
+ *   - "locationOn" → "locationon"
+ *   - "location_on" → "locationon"
+ *   - "calendar_today" → "calendartoday"
+ */
+function normalizeIconName(name: string): string {
+  // Remove underscores/hyphens and convert to lowercase
+  return name.replace(/[_-]/g, '').toLowerCase();
+}
 
 export function Icon({ surfaceId, component }: CatalogComponentProps) {
   const node = component as Types.IconNode;
@@ -60,7 +117,9 @@ export function Icon({ surfaceId, component }: CatalogComponentProps) {
     return null;
   }
 
-  const IconComp = iconMap[iconName.toLowerCase()] ?? Icons.IconHelpCircle;
+  // Normalize icon name to handle both camelCase and snake_case
+  const normalizedName = normalizeIconName(iconName);
+  const IconComp = iconMap[normalizedName] ?? Icons.IconHelpCircle;
 
   const style: React.CSSProperties = {
     flex: component.weight ?? 'initial',

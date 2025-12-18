@@ -1,12 +1,15 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Button, Input, Spin, Toast } from '@douyinfe/semi-ui';
 import { IconSun, IconMoon, IconSend } from '@douyinfe/semi-icons';
-import { A2UIProvider, Surface, MessageProcessor } from '@a2ui/react';
+import { A2UIProvider, ThemeProvider, Surface, MessageProcessor, useA2UIContext } from '@a2ui/react';
 import { A2UIClient } from './client';
 import { AppConfig, restaurantConfig, contactsConfig } from './configs';
+import { registerCustomComponents } from './custom-components';
+import { applyThemeMode, getInitialThemeMode, saveThemeMode, ThemeMode } from './theme';
 import './App.css';
 
-const DEFAULT_SURFACE_ID = 'default';
+// Register custom components once at startup
+registerCustomComponents();
 
 const configs: Record<string, AppConfig> = {
   restaurant: restaurantConfig,
@@ -17,16 +20,17 @@ function App() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [hasData, setHasData] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    // Check if theme-mode is already set
-    const themeMode = document.body.getAttribute('theme-mode');
-    if (themeMode === 'dark') return true;
-    if (themeMode === 'light') return false;
-    // Otherwise check system preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  const [themeMode, setThemeMode] = useState<ThemeMode>(getInitialThemeMode);
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
   const loadingIntervalRef = useRef<number | null>(null);
+
+  // Derive isDark from themeMode for UI display
+  const isDark = useMemo(() => {
+    if (themeMode === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return themeMode === 'dark';
+  }, [themeMode]);
 
   // Load config from URL
   const config = useMemo(() => {
@@ -45,11 +49,12 @@ function App() {
     if (config.background) {
       document.documentElement.style.setProperty('--background', config.background);
     }
-    // Initialize theme mode based on current state
-    if (!document.body.hasAttribute('theme-mode')) {
-      document.body.setAttribute('theme-mode', isDark ? 'dark' : 'light');
-    }
-  }, [config, isDark]);
+  }, [config]);
+
+  // Apply theme mode when it changes
+  useEffect(() => {
+    applyThemeMode(themeMode);
+  }, [themeMode]);
 
   // Handle loading text rotation
   const startLoadingAnimation = useCallback(() => {
@@ -124,13 +129,9 @@ function App() {
   );
 
   const toggleTheme = useCallback(() => {
-    setIsDark((prev) => {
-      const next = !prev;
-      if (next) {
-        document.body.setAttribute('theme-mode', 'dark');
-      } else {
-        document.body.setAttribute('theme-mode', 'light');
-      }
+    setThemeMode((prev: ThemeMode) => {
+      const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      saveThemeMode(next);
       return next;
     });
   }, []);
@@ -186,31 +187,45 @@ function App() {
     );
   };
 
-  // Render surfaces
-  const renderSurfaces = () => {
-    if (!hasData) return null;
-
-    return (
-      <section className="surfaces">
-        <Surface surfaceId={DEFAULT_SURFACE_ID} />
-      </section>
-    );
-  };
+  // Render surfaces - now handled by SurfaceRenderer component
 
   return (
-    <A2UIProvider processor={processor}>
-      <div className="shell">
-        <Button
-          className="theme-toggle"
-          theme="borderless"
-          icon={isDark ? <IconSun size="large" /> : <IconMoon size="large" />}
-          onClick={toggleTheme}
-        />
-        {renderForm()}
-        {renderLoading()}
-        {renderSurfaces()}
-      </div>
-    </A2UIProvider>
+    <ThemeProvider mode={themeMode}>
+      <A2UIProvider processor={processor}>
+        <div className="shell">
+          <Button
+            className="theme-toggle"
+            theme="borderless"
+            icon={isDark ? <IconSun size="large" /> : <IconMoon size="large" />}
+            onClick={toggleTheme}
+          />
+          {renderForm()}
+          {renderLoading()}
+          {hasData && <SurfaceRenderer />}
+        </div>
+      </A2UIProvider>
+    </ThemeProvider>
+  );
+}
+
+/**
+ * Component that renders all active surfaces.
+ * Must be inside A2UIProvider to access surfaces context.
+ */
+function SurfaceRenderer() {
+  const { surfaces } = useA2UIContext();
+  const surfaceIds = Array.from(surfaces.keys());
+
+  if (surfaceIds.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="surfaces">
+      {surfaceIds.map((surfaceId) => (
+        <Surface key={surfaceId} surfaceId={surfaceId} />
+      ))}
+    </section>
   );
 }
 

@@ -9,4 +9,11 @@ export {
   useBooleanBinding,
   useAction,
   useSetData,
+  useA2UI,
 } from './hooks';
+export {
+  ThemeProvider,
+  useTheme,
+  type ThemeMode,
+  type ThemeProviderProps,
+} from './ThemeProvider';

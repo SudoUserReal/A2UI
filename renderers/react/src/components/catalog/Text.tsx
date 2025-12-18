@@ -1,9 +1,7 @@
-import { Typography, Rating } from '@douyinfe/semi-ui';
+import { Rating, MarkdownRender } from '@douyinfe/semi-ui';
 import { Types } from '@a2ui/lit/0.8';
 import { CatalogComponentProps } from './index';
 import { useStringBinding } from '../../core/hooks';
-
-const { Title, Text: SemiText, Paragraph } = Typography;
 
 // Check if text is a star rating pattern (e.g., "★★★★☆")
 function parseStarRating(text: string): number | null {
@@ -44,22 +42,37 @@ export function Text({ surfaceId, component }: CatalogComponentProps) {
     );
   }
 
-  // Map usageHint to Semi UI Typography components
+  // Always render with MarkdownRender (consistent with Lit and Angular)
+  // Prepend heading syntax based on usageHint
+  let markdownText = textValue;
   switch (usageHint) {
     case 'h1':
-      return <Title data-id={component.id} heading={1} style={style}>{textValue}</Title>;
+      markdownText = `# ${markdownText}`;
+      break;
     case 'h2':
-      return <Title data-id={component.id} heading={2} style={style}>{textValue}</Title>;
+      markdownText = `## ${markdownText}`;
+      break;
     case 'h3':
-      return <Title data-id={component.id} heading={3} style={style}>{textValue}</Title>;
+      markdownText = `### ${markdownText}`;
+      break;
     case 'h4':
-      return <Title data-id={component.id} heading={4} style={style}>{textValue}</Title>;
+      markdownText = `#### ${markdownText}`;
+      break;
     case 'h5':
-      return <Title data-id={component.id} heading={5} style={style}>{textValue}</Title>;
+      markdownText = `##### ${markdownText}`;
+      break;
     case 'caption':
-      return <SemiText data-id={component.id} type="tertiary" size="small" style={style}>{textValue}</SemiText>;
-    case 'body':
-    default:
-      return <Paragraph data-id={component.id} style={style}>{textValue}</Paragraph>;
+      markdownText = `*${markdownText}*`;
+      break;
   }
+
+  return (
+    <div 
+      data-id={component.id} 
+      style={style}
+      className="a2ui-text"
+    >
+      <MarkdownRender raw={markdownText} format="md" />
+    </div>
+  );
 }

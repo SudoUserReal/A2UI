@@ -14,10 +14,15 @@ export {
   useBooleanBinding,
   useAction,
   useSetData,
+  useA2UI,
+  ThemeProvider,
+  useTheme,
   type DispatchedEvent,
   type EventListener,
   type A2UIProviderProps,
   type A2UIContextValue,
+  type ThemeMode,
+  type ThemeProviderProps,
 } from './core';
 
 // Component exports

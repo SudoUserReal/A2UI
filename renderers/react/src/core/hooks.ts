@@ -160,3 +160,23 @@ export function useSetData(
     [component, surfaceId, processor]
   );
 }
+
+/**
+ * Unified hook for A2UI message handling.
+ * Provides convenient access to processor and surfaces.
+ */
+export function useA2UI() {
+  const { processor, surfaces } = useA2UIContext();
+
+  return useMemo(
+    () => ({
+      processor,
+      surfaces,
+      dispatch: processor.dispatch.bind(processor),
+      processMessages: processor.processMessages.bind(processor),
+      getSurface: (id: string) => surfaces.get(id) ?? null,
+      clearSurfaces: processor.clearSurfaces.bind(processor),
+    }),
+    [processor, surfaces]
+  );
+}

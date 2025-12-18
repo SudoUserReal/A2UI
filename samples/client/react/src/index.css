@@ -107,3 +107,20 @@ body[theme-mode="dark"] {
 #root {
   min-height: 100%;
 }
+
+/* Reset margins for A2UI Text component's MarkdownRender */
+/* Match Semi's selector specificity: .semi-markdownRender-component-header.semi-typography.semi-typography-h5 */
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h1,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h2,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h3,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h4,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h5,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h6 {
+  margin: 0;
+  line-height: inherit;
+}
+
+.a2ui-text .semi-markdownRender .semi-typography.semi-typography-paragraph {
+  margin: 0;
+  line-height: inherit;
+}
